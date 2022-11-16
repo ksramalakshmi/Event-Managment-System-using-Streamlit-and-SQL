@@ -1,19 +1,6 @@
-import mysql.connector
-# from pathlib import Path 
 import streamlit as st
 import pandas as pd 
 import functions
-
-# conn = mysql.connector.connect(user='root', password='',
-#                               host='127.0.0.1',
-#                               database='event_project')
-
-# # sql_path = Path('tables.sql')
-
-# cursor = conn.cursor()
-# # cursor.execute(sql_path.read_text())
-
-# st.title("Event Management")
 
 def bills_page(conn, cursor):
     bills_menu = ["Add Bill", "View All Bills", "View Bill", "Edit Bill", "Remove Bill"]
@@ -37,10 +24,6 @@ def bills_page(conn, cursor):
                 st.success("Successfully added Bills: {}".format(dealer))
 
         case "View All Bills":
-            # cursor.execute('SELECT * FROM BILLS')
-            # data = cursor.fetchall()
-            # df = pd.DataFrame(data, columns=['Bill ID', 'Dealer', 'Amount', 'Payment Status', 'Event ID', 'Host ID', 'Supplier ID'], index=['Bill_ID'])
-           
             df = functions.view_all_bills(cursor)
             st.dataframe(df)
 
@@ -126,20 +109,13 @@ def bills_page(conn, cursor):
                     st.success("Successfully Updated Bill")
 
         case "Remove Bill":
-            # cursor.execute('SELECT * FROM BILLS')
-            # data = cursor.fetchall()
-            # df = pd.DataFrame(data, columns=['Bills_ID', 'H_Name', 'Mobile_Number', 'Mail_ID'], index=['Bills_ID'])
-            
             df = functions.view_all_bills(cursor)
             with st.expander('View all Bills'):
                 st.dataframe(df)
             
-            list_of_Bills = [i[1] for i in data]
-            selected_Bills = st.selectbox("Bill to Delete", list_of_Bills)
+            list_of_Bills = [i for i in df.iloc[:, 0]]
+            selected_Bill = st.selectbox("Select Bill ID to Delete", list_of_Bills)
             if st.button("Delete Bill"):
-                st.warning("Do you want to delete ::{}".format(list_of_Bills))
-                cursor.execute('DELETE FROM BILL WHERE Bill_ID="{}"'.format(selected_Bills['Bills_ID'])) # or use indexing
+                cursor.execute('DELETE FROM BILL WHERE Bill_ID={}'.format(selected_Bill))
                 conn.commit()
                 st.success("Bill has been deleted successfully")
-
-# conn.close()

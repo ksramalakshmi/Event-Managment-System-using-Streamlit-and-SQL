@@ -1,19 +1,6 @@
-import mysql.connector
-# from pathlib import Path 
 import streamlit as st
 import pandas as pd 
 import functions
-
-# conn = mysql.connector.connect(user='root', password='',
-#                               host='127.0.0.1',
-#                               database='event_project')
-
-# # sql_path = Path('tables.sql')
-
-# cursor = conn.cursor()
-# # cursor.execute(sql_path.read_text())
-
-# st.title("Event Management")
 
 def supplier_page(conn, cursor):
     Supplier_menu = ["Add Supplier", "View All Suppliers", "View Supplier", "Edit Supplier", "Remove Supplier"]
@@ -36,10 +23,6 @@ def supplier_page(conn, cursor):
                 st.success("Successfully added Supplier: {}".format(s_name))
 
         case "View All Suppliers":
-            # cursor.execute('SELECT * FROM Supplier')
-            # data = cursor.fetchall()
-            # df = pd.DataFrame(data, columns=['Supplier ID', 'Supplier Name', 'Department', 'Mail ID', 'Point of Contact', 'Mobile Number', 'Address'], index=['Supplier_ID'])
-            
             df = functions.view_all_suppliers(cursor)
             st.dataframe(df)
 
@@ -124,21 +107,14 @@ def supplier_page(conn, cursor):
                     conn.commit()
                     st.success("Successfully Updated Supplier")
 
-        case "Remove Supplier":
-            # cursor.execute('SELECT * FROM Supplier')
-            # data = cursor.fetchall()
-            # df = pd.DataFrame(data, columns=['Supplier ID', 'Supplier Name', 'Department', 'Mail ID', 'Point of Contact', 'Mobile Number', 'Address'], index=['Supplier_ID'])
-            
+        case "Remove Supplier": 
             df = functions.view_all_suppliers(cursor)
             with st.expander('View all Suppliers'):
                 st.dataframe(df)
             
-            list_of_Supplier = [i[1] for i in data]
-            selected_Supplier = st.selectbox("Supplier to Delete", list_of_Supplier)
+            list_of_Supplier =  [i for i in df.iloc[:, 0]]
+            selected_Supplier = st.selectbox("Select Supplier ID to Delete", list_of_Supplier)
             if st.button("Delete Supplier"):
-                st.warning("Do you want to delete ::{}".format(list_of_Supplier))
-                cursor.execute('DELETE FROM Supplier WHERE Supplier_ID="{}"'.format(selected_Supplier['Supplier_ID'])) # or use indexing
+                cursor.execute('DELETE FROM Supplier WHERE Supplier_ID={}'.format(selected_Supplier['Supplier_ID']))
                 conn.commit()
                 st.success("Supplier has been deleted successfully")
-
-# conn.close()

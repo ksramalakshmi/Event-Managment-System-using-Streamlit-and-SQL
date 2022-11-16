@@ -1,19 +1,6 @@
-import mysql.connector
-# from pathlib import Path 
 import streamlit as st
 import pandas as pd 
 import functions
-
-# conn = mysql.connector.connect(user='root', password='',
-#                               host='127.0.0.1',
-#                               database='event_project')
-
-# # sql_path = Path('tables.sql')
-
-# cursor = conn.cursor()
-# # cursor.execute(sql_path.read_text())
-
-# st.title("Event Management")
 
 def event_page(conn, cursor):
     Event_menu = ["Add Event", "View All Events", "View Event", "Edit Event", "Remove Event"]
@@ -37,11 +24,7 @@ def event_page(conn, cursor):
                 conn.commit()
                 st.success("Successfully added Event: {}".format(e_name))
 
-        case "View All Events":
-            # cursor.execute('SELECT * FROM Events')
-            # data = cursor.fetchall()
-            # df = pd.DataFrame(data, columns=['Event_ID', 'Event Name', 'Event Type', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Venue', 'Host ID'], index=['Event_ID'])
-            
+        case "View All Events":            
             df = functions.view_all_events(cursor)
             st.dataframe(df)
 
@@ -53,7 +36,7 @@ def event_page(conn, cursor):
                 values = (e_name)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=['Event_ID', 'Event Name', 'Event Type', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Venue', 'Host ID'], index=['Event_ID'])
+                df = pd.DataFrame(data, columns=['Event ID', 'Event Name', 'Event Type', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Venue', 'Host ID'], index=['Event_ID'])
                 st.dataframe(df)
 
         case "Edit Event":
@@ -148,21 +131,14 @@ def event_page(conn, cursor):
                     conn.commit()
                     st.success("Successfully Updated Event")
 
-        case "Remove Event":
-            # cursor.execute('SELECT * FROM Events')
-            # data = cursor.fetchall()
-            # df = pd.DataFrame(data, columns=['Event_ID', 'Event Name', 'Event Type', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Venue', 'Host ID'], index=['Event_ID'])
-            
+        case "Remove Event":            
             df = functions.view_all_events(cursor)
             with st.expander('View all Events'):
                 st.dataframe(df)
             
-            list_of_Event = [i[1] for i in data]
-            selected_Event = st.selectbox("Event to Delete", list_of_Event)
+            list_of_Event =  [i for i in df.iloc[:, 0]]
+            selected_Event = st.selectbox("Select Event ID to Delete", list_of_Event)
             if st.button("Delete Event"):
-                st.warning("Do you want to delete ::{}".format(list_of_Event))
-                cursor.execute('DELETE FROM Event WHERE Event_ID="{}"'.format(selected_Event['Event_ID'])) # or use indexing
+                cursor.execute('DELETE FROM Event WHERE Event_ID="{}"'.format(selected_Event))
                 conn.commit()
                 st.success("Event has been deleted successfully")
-
-# conn.close()

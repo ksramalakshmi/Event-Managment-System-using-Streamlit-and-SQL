@@ -1,18 +1,6 @@
-import mysql.connector
-# from pathlib import Path 
 import streamlit as st
 import pandas as pd 
-
-# conn = mysql.connector.connect(user='root', password='',
-#                               host='127.0.0.1',
-#                               database='event_project')
-
-# # sql_path = Path('tables.sql')
-
-# cursor = conn.cursor()
-# # cursor.execute(sql_path.read_text())
-
-# st.title("Event Management")
+import functions
 
 def attendees_page(conn, cursor):
     user_menu = ["Add User", "View All Users", "View User", "Edit User", "Remove User"]
@@ -38,9 +26,7 @@ def attendees_page(conn, cursor):
                 st.success("Successfully added User: {}".format(f_name+" "+l_name))
 
         case "View All Users":
-            cursor.execute('SELECT * FROM ATTENDEES')
-            data = cursor.fetchall()
-            df = pd.DataFrame(data, columns=['User_ID', 'F_Name', 'L_Name', 'Mobile_Number', 'Mail_ID', 'DOB', 'City', 'State', 'Address'], index=['User_ID'])
+            df = functions.view_all_attendees(cursor)
             st.dataframe(df)
 
         case "View User":
@@ -48,12 +34,11 @@ def attendees_page(conn, cursor):
             l_name = st.text_input("Last Name:")
 
             if st.button("View User"):
-                query = ('SELECT * FROM ATTENDEES WHERE F_NAME = %s & L_NAME = %s;')
+                query = ('SELECT * FROM ATTENDEES WHERE F_NAME = %s || L_NAME = %s;')
                 values = (f_name, l_name)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=['User_ID', 'F_Name', 'L_Name', 'Mobile_Number', 'Mail_ID', 'DOB', 'City', 'State', 'Address'], index=['User_ID'])
-                df = df.reset_index('User_ID')
+                df = pd.DataFrame(data, columns=["User ID", "First Name", "Last Name", "Mobile Number", "Mail ID", "Date of Birth", "City", "State", "Address"], index=['User_ID'])
                 st.dataframe(df)
 
         case "Edit User":
@@ -149,19 +134,15 @@ def attendees_page(conn, cursor):
                     st.success("Successfully Updated User")
         
         case "Remove User":
-            cursor.execute('SELECT * FROM ATTENDEES')
-            data = cursor.fetchall()
-            df = pd.DataFrame(data, columns=['User_ID', 'F_Name', 'L_Name', 'Mobile_Number', 'Mail_ID', 'DOB', 'City', 'State', 'Address'], index=['User_ID'])
-            df = df.reset_index('User_ID')
+            df = functions.view_all_attendees(cursor)
             with st.expander('View all Users'):
                 st.dataframe(df)
             
-            list_of_users = [i[1] for i in data]
-            selected_user = st.selectbox("User to Delete", list_of_users)
+            list_of_users = [i for i in df.iloc[:, 0]]
+            selected_user = st.selectbox("Select User ID to Delete", list_of_users)
             if st.button("Delete User"):
-                st.warning("Do you want to delete ::{}".format(list_of_users))
-                cursor.execute('DELETE FROM ATTENDEES WHERE USER_ID="{}"'.format(selected_user['User_ID'])) # or use indexing
+                cursor.execute('DELETE FROM ATTENDEES WHERE USER_ID={};'.format(selected_user))
+                cursor.execute('ALTER TABLE ATTENDEES AUTO_INCREMENT=1')
                 conn.commit()
                 st.success("User has been deleted successfully")
 
-# conn.close()

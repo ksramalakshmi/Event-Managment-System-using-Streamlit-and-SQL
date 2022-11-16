@@ -1,18 +1,6 @@
-import mysql.connector
-# from pathlib import Path 
 import streamlit as st
 import pandas as pd 
-
-# conn = mysql.connector.connect(user='root', password='',
-#                               host='127.0.0.1',
-#                               database='event_project')
-
-# # sql_path = Path('tables.sql')
-
-# cursor = conn.cursor()
-# # cursor.execute(sql_path.read_text())
-
-# st.title("Event Management")
+import functions
 
 def host_page(conn, cursor):
     Host_menu = ["Add Host", "View All Hosts", "View Host", "Edit Host", "Remove Host"]
@@ -32,9 +20,7 @@ def host_page(conn, cursor):
                 st.success("Successfully added Host: {}".format(h_name))
 
         case "View All Hosts":
-            cursor.execute('SELECT * FROM HOSTS')
-            data = cursor.fetchall()
-            df = pd.DataFrame(data, columns=['Host_ID', 'Host Name', 'Mobile_Number', 'Mail_ID'], index=['Host_ID'])
+            df = functions.view_all_hosts(cursor)
             st.dataframe(df)
 
         case "View Host":
@@ -45,11 +31,11 @@ def host_page(conn, cursor):
                 values = (h_name)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=['Host_ID', 'Host Name', 'Mobile_Number', 'Mail_ID'], index=['Host_ID'])
+                df = pd.DataFrame(data, columns=['Host ID', 'Host Name', 'Mobile_Number', 'Mail_ID'], index=['Host ID'])
                 st.dataframe(df)
 
         case "Edit Host":
-            edit_menu = ['Host Name', 'Mobile_Number', 'Mail_ID']
+            edit_menu = ['Host Name', 'Mobile Number', 'Mail ID']
             edit_choice = st.selectbox("Menu", edit_menu)
 
             if edit_choice == 'Host Name':
@@ -86,18 +72,14 @@ def host_page(conn, cursor):
                     st.success("Successfully Updated Host")
             
         case "Remove Host":
-            cursor.execute('SELECT * FROM HOSTS')
-            data = cursor.fetchall()
-            df = pd.DataFrame(data, columns=['Host_ID', 'H_Name', 'Mobile_Number', 'Mail_ID'], index=['Host_ID'])
+            df = functions.view_all_hosts(cursor)
             with st.expander('View all Hosts'):
                 st.dataframe(df)
             
-            list_of_Hosts = [i[1] for i in data]
-            selected_Host = st.selectbox("Host to Delete", list_of_Hosts)
+            list_of_Hosts =  [i for i in df.iloc[:, 0]]
+            selected_Host = st.selectbox("Select Host ID to Delete", list_of_Hosts)
             if st.button("Delete Host"):
                 st.warning("Do you want to delete ::{}".format(list_of_Hosts))
-                cursor.execute('DELETE FROM HOSTS WHERE Host_ID="{}"'.format(selected_Host['Host_ID'])) # or use indexing
+                cursor.execute('DELETE FROM HOSTS WHERE Host_ID="{}"'.format(selected_Host))
                 conn.commit()
                 st.success("Host has been deleted successfully")
-
-# conn.close()
