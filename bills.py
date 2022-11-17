@@ -3,7 +3,7 @@ import pandas as pd
 import functions
 
 def bills_page(conn, cursor):
-    bills_menu = ["Add Bill", "View All Bills", "View Bill", "Edit Bill", "Remove Bill"]
+    bills_menu = ["Add Bill", "View All Bills", "View Bill", "Edit Bill", "Get Pending Bills", "Remove Bill"]
     bills_choice = st.sidebar.selectbox("Menu", bills_menu)
 
     match bills_choice:
@@ -119,3 +119,22 @@ def bills_page(conn, cursor):
                 cursor.execute('DELETE FROM BILL WHERE Bill_ID={}'.format(selected_Bill))
                 conn.commit()
                 st.success("Bill has been deleted successfully")
+
+        case "Get Pending Bills":
+            df1 = functions.view_all_events(cursor)
+            event_names = [i for i in df1.iloc[:, 1]]
+            event_names.insert(0, "Select Event")
+            e_name_choice = st.selectbox("Event Name", event_names)
+            if (e_name_choice != "Select Event"):
+                e_id = str(df1.loc[df1['Event Name'] == e_name_choice]['Event ID'].values[0])
+            
+                df = functions.view_all_bills(cursor)
+                df1 = df.loc[df["Event ID"] == e_id] 
+                df2 = df.loc[df["Payment Status"] == "Pending"]
+
+                df = pd.merge(df1, df2, how='inner', on=['Bill ID'])
+
+                if df.empty:
+                    st.success("No Pending Bills!")
+                else:
+                    st.dataframe(df)
