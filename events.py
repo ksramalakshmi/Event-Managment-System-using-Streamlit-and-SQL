@@ -18,7 +18,7 @@ def event_page(conn, cursor):
             host_id = st.text_input("Host ID:")
 
             if st.button("Add Event"):
-                query = ('INSERT INTO Events (EVENT_NAME, EVENT_TYPE, EVENT_DATE_START, EVENT_START_END, EVENT_TIME_START, EVENT_TIME_END, VENUE, HOST_ID) VALUES (%s, %s, %s, %s, %s, %s,%s, %s, %s);')
+                query = ('INSERT INTO Events (EVENT_NAME, EVENT_TYPE, EVENT_DATE_START, EVENT_DATE_END, EVENT_TIME_START, EVENT_TIME_END, VENUE, HOST_ID) VALUES (%s, %s, %s, %s, %s, %s,%s, %s);')
                 values = (e_name, e_type, e_date_start, e_date_end, start_time, end_time, venue, host_id)
                 cursor.execute(query, values)
                 conn.commit()
@@ -36,7 +36,7 @@ def event_page(conn, cursor):
                 values = (e_name)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=['Event ID', 'Event Name', 'Event Type', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Venue', 'Host ID'], index=['Event_ID'])
+                df = pd.DataFrame(data, columns=['Event ID', 'Event Name', 'Event Type', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Venue', 'Host ID'])
                 st.dataframe(df)
 
         case "Edit Event":

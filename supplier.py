@@ -34,7 +34,7 @@ def supplier_page(conn, cursor):
                 values = (s_name)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=['Supplier ID', 'Supplier Name', 'Department', 'Mail ID', 'Point of Contact', 'Mobile Number', 'Address'], index=['Supplier_ID'])
+                df = pd.DataFrame(data, columns=['Supplier ID', 'Supplier Name', 'Department', 'Mail ID', 'Point of Contact', 'Mobile Number', 'Address'])
                 st.dataframe(df)
 
         case "Edit Supplier":

@@ -31,7 +31,7 @@ def host_page(conn, cursor):
                 values = (h_name)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=['Host ID', 'Host Name', 'Mobile_Number', 'Mail_ID'], index=['Host ID'])
+                df = pd.DataFrame(data, columns=['Host ID', 'Host Name', 'Mobile_Number', 'Mail_ID'])
                 st.dataframe(df)
 
         case "Edit Host":

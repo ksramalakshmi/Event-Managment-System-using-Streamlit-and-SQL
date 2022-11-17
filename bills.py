@@ -35,7 +35,7 @@ def bills_page(conn, cursor):
                 values = (dealer)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=['Bill ID', 'Dealer', 'Amount', 'Payment Status', 'Event ID', 'Host ID', 'Supplier ID'], index=['Bill_ID'])
+                df = pd.DataFrame(data, columns=['Bill ID', 'Dealer', 'Amount', 'Payment Status', 'Event ID', 'Host ID', 'Supplier ID'])
                 st.dataframe(df)
 
         case "Edit Bill":

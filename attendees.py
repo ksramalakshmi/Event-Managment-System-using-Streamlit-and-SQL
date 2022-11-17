@@ -38,7 +38,7 @@ def attendees_page(conn, cursor):
                 values = (f_name, l_name)
                 cursor.execute(query, values)
                 data = cursor.fetchall()
-                df = pd.DataFrame(data, columns=["User ID", "First Name", "Last Name", "Mobile Number", "Mail ID", "Date of Birth", "City", "State", "Address"], index=['User_ID'])
+                df = pd.DataFrame(data, columns=["User ID", "First Name", "Last Name", "Mobile Number", "Mail ID", "Date of Birth", "City", "State", "Address"])
                 st.dataframe(df)
 
         case "Edit User":
