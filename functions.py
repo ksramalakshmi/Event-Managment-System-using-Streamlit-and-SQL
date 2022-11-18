@@ -29,9 +29,10 @@ def view_all_events(cursor):
     return df
 
 def view_all_bills(cursor):
-    cursor.execute('SELECT * FROM BILLS')
+    query = 'CALL RETURN_ALL_BILLS();'
+    cursor.execute(query)
     data = cursor.fetchall()
-    df = pd.DataFrame(data, columns=['Bill ID', 'Dealer', 'Amount', 'Payment Status', 'Event ID', 'Host ID', 'Supplier ID'])
+    df = pd.DataFrame(data, columns=['Bill ID', 'Supplier Name', 'Host Name', 'Event Name', 'Amount', 'Payment Status'])
     return df
 
 def view_all_suppliers(cursor):

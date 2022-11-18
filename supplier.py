@@ -27,12 +27,12 @@ def supplier_page(conn, cursor):
             st.dataframe(df)
 
         case "View Supplier":
-            s_name = st.text_input("Supplier Name:")
+            df = functions.view_all_suppliers(cursor)
+            list_of_Supplier =  [i for i in df.iloc[:, 1]]
+            selected_Supplier = st.selectbox("Select Supplier", list_of_Supplier)
 
             if st.button("View Supplier"):
-                query = ('SELECT * FROM Suppliers WHERE SUPPLIER_NAME = %s;')
-                values = (s_name)
-                cursor.execute(query, values)
+                cursor.execute('SELECT * FROM Supplier WHERE SUPPLIER_NAME = "{}";'.format(selected_Supplier))
                 data = cursor.fetchall()
                 df = pd.DataFrame(data, columns=['Supplier ID', 'Supplier Name', 'Department', 'Mail ID', 'Point of Contact', 'Mobile Number', 'Address'])
                 st.dataframe(df)
@@ -41,68 +41,66 @@ def supplier_page(conn, cursor):
             edit_menu = ['Supplier Name', 'Department', 'Mail ID', 'Point of Contact', 'Mobile Number', 'Address']
             edit_choice = st.selectbox("Menu", edit_menu)
 
+            df = functions.view_all_suppliers(cursor)
+            list_of_Supplier =  [i for i in df.iloc[:, 1]]
+            selected_Supplier = st.selectbox("Select Supplier", list_of_Supplier)
+
             if edit_choice == 'Supplier Name':
-                Supplier_id = st.text_input("Supplier ID:")
                 s_name = st.text_input("Supplier Name:")
 
                 if st.button("Update"):
-                    query = ('UPDATE Supplier SET Supplier_NAME = %s WHERE Supplier_ID = %s;')
-                    values = (s_name, Supplier_id)
+                    query = ('UPDATE Supplier SET Supplier_NAME = %s WHERE Supplier_name = %s;')
+                    values = (s_name, selected_Supplier)
                     cursor.execute(query, values)
                     conn.commit()
                     st.success("Successfully Updated Supplier")
 
             if edit_choice == 'Department':
-                Supplier_id = st.text_input("Supplier ID:")
                 dept = st.text_input("Department:")
 
                 if st.button("Update"):
-                    query = ('UPDATE Supplier SET DEPARTMENT = %s WHERE Supplier_ID = %s;')
-                    values = (dept, Supplier_id)
+                    query = ('UPDATE Supplier SET DEPARTMENT = %s WHERE Supplier_name = %s;')
+                    values = (dept, selected_Supplier)
                     cursor.execute(query, values)
                     conn.commit()
                     st.success("Successfully Updated Supplier")
 
             if edit_choice == 'Mail ID':
-                Supplier_id = st.text_input("Supplier ID:")
                 mail_id = st.text_input("Mail ID")
 
                 if st.button("Update"):
-                    query = ('UPDATE Supplier SET MAIL_ID = %s WHERE Supplier_ID = %s;')
-                    values = (mail_id, Supplier_id)
+                    query = ('UPDATE Supplier SET MAIL_ID = %s WHERE Supplier_name = %s;')
+                    values = (mail_id, selected_Supplier)
                     cursor.execute(query, values)
                     conn.commit()
                     st.success("Successfully Updated Supplier")
 
             if edit_choice == 'Point of Contact':
-                Supplier_id = st.text_input("Supplier ID:")
                 poc = st.text_input("Point of Contact")
 
                 if st.button("Update"):
-                    query = ('UPDATE Supplier SET POINT_OF_CONTACT = %s WHERE Supplier_ID = %s;')
-                    values = (poc, Supplier_id)
+                    query = ('UPDATE Supplier SET POINT_OF_CONTACT = %s WHERE Supplier_name = %s;')
+                    values = (poc, selected_Supplier)
                     cursor.execute(query, values)
                     conn.commit()
                     st.success("Successfully Updated Supplier")
             
             if edit_choice == 'Mobile Number':
-                Supplier_id = st.text_input("Supplier ID:")
                 m_number = st.text_input("Mobile Number:")
 
                 if st.button("Update"):
-                    query = ('UPDATE Supplier SET MOBILE_NO = %s WHERE Supplier_ID = %s;')
-                    values = (m_number, Supplier_id)
+                    query = ('UPDATE Supplier SET MOBILE_NO = %s WHERE Supplier_name = %s;')
+                    values = (m_number, selected_Supplier)
                     cursor.execute(query, values)
                     conn.commit()
                     st.success("Successfully Updated Supplier")
             
             if edit_choice == 'Address':
-                Supplier_id = st.text_input("Supplier ID:")
                 address = st.text_input("Address:")
 
                 if st.button("Update"):
-                    query = ('UPDATE Supplier SET ADDRESS = %s WHERE Supplier_ID = %s;')
-                    values = (address, Supplier_id)
+                    query = ('UPDATE Supplier SET ADDRESS = %s WHERE Supplier_name = %s;')
+                    values = (address, selected_Supplier)
                     cursor.execute(query, values)
                     conn.commit()
                     st.success("Successfully Updated Supplier")
@@ -112,9 +110,9 @@ def supplier_page(conn, cursor):
             with st.expander('View all Suppliers'):
                 st.dataframe(df)
             
-            list_of_Supplier =  [i for i in df.iloc[:, 0]]
-            selected_Supplier = st.selectbox("Select Supplier ID to Delete", list_of_Supplier)
+            list_of_Supplier =  [i for i in df.iloc[:, 1]]
+            selected_Supplier = st.selectbox("Select Supplier to Delete", list_of_Supplier)
             if st.button("Delete Supplier"):
-                cursor.execute('DELETE FROM Supplier WHERE Supplier_ID={}'.format(selected_Supplier['Supplier_ID']))
+                cursor.execute('DELETE FROM Supplier WHERE Supplier_name="{}"'.format(selected_Supplier))
                 conn.commit()
                 st.success("Supplier has been deleted successfully")
