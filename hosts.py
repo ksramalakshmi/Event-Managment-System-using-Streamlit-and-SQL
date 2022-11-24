@@ -27,9 +27,8 @@ def host_page(conn, cursor):
             h_name = st.text_input("Host Name:")
 
             if st.button("View Host"):
-                query = ('SELECT * FROM HOSTS WHERE H_NAME = %s;')
-                values = (h_name)
-                cursor.execute(query, values)
+                query = 'SELECT * FROM HOSTS WHERE H_NAME = "{}";'.format(h_name)
+                cursor.execute(query)
                 data = cursor.fetchall()
                 df = pd.DataFrame(data, columns=['Host ID', 'Host Name', 'Mobile_Number', 'Mail_ID'])
                 st.dataframe(df)
