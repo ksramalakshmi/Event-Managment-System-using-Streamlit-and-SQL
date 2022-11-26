@@ -91,10 +91,11 @@ def bills_page(conn, cursor):
 
             if edit_choice == 'Event Name':
                 df = functions.view_all_events(cursor)
-                list_of_events =  [i for i in df.iloc[:, 3]]
+                list_of_events =  [i for i in df.iloc[:, 2]]
                 selected_event = st.selectbox("Select Event", list_of_events)
 
                 event_id = str(df.loc[df['Event Name'] == selected_event]['Event ID'].values[0])
+                print(event_id)
 
                 if st.button("Update"):
                     query = ('UPDATE BILLS SET EVENT_ID = %s WHERE Bill_ID = %s;')

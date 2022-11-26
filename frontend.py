@@ -5,6 +5,7 @@ from hosts import host_page
 from bills import bills_page
 from supplier import supplier_page
 from attendee_event import attendee_event
+from query import query_page
 
 import mariadb
 
@@ -97,7 +98,7 @@ def main():
 
     st.title("Event Management")
 
-    table_menu = ["Attendees", "Hosts", "Events", "Bills", "Supplier", "Attend an Event"]
+    table_menu = ["Attendees", "Hosts", "Events", "Bills", "Supplier", "Attend an Event", "Write your own query"]
     table_choice = st.sidebar.selectbox("Table", table_menu)
 
     match table_choice:
@@ -118,6 +119,9 @@ def main():
         
         case "Attend an Event":
             attendee_event(conn, cursor)
+        
+        case "Write your own query":
+            query_page(conn, cursor)
 
     conn.close()
 
