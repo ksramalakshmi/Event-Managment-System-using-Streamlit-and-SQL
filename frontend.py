@@ -75,7 +75,7 @@ def create_table():
     'USER_ID INT(10) NOT NULL AUTO_INCREMENT, '
     'F_NAME VARCHAR(255),'
     'L_NAME VARCHAR(255),'
-    'MOBILE_NUMBER INT(10),' 
+    'MOBILE_NUMBER INT(20),' 
     'MAIL_ID VARCHAR(255),'
     'DOB DATE, '
     'CITY VARCHAR(255),'
