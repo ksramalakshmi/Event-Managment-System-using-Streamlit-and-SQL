@@ -139,6 +139,6 @@ def event_page(conn, cursor):
             list_of_Event =  [i for i in df.iloc[:, 0]]
             selected_Event = st.selectbox("Select Event ID to Delete", list_of_Event)
             if st.button("Delete Event"):
-                cursor.execute('DELETE FROM Event WHERE Event_ID="{}"'.format(selected_Event))
+                cursor.execute('DELETE FROM events WHERE `events`.`EVENT_ID` = {};'.format(selected_Event))
                 conn.commit()
                 st.success("Event has been deleted successfully")
