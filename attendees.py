@@ -141,8 +141,7 @@ def attendees_page(conn, cursor):
             list_of_users = [i for i in df.iloc[:, 0]]
             selected_user = st.selectbox("Select User ID to Delete", list_of_users)
             if st.button("Delete User"):
-                print(selected_user)
-                cursor.execute('DELETE FROM attendees WHERE `attendees`.`USER_ID` = {};'.format(int(selected_user)))
+                cursor.execute('DELETE FROM attendees WHERE `attendees`.`USER_ID` = '+str(selected_user)+";")
                 conn.commit()
                 st.success("User has been deleted successfully")
 
